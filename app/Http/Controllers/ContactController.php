@@ -22,6 +22,11 @@ class ContactController extends Controller
     {
         $this->validations($request);
         $data = $request->all();
+
+        //PHOTO
+        if ($request->has('photo')) {
+            $data['photo'] = $this->uploadPhoto($request->photo);
+        }
         Contact::create($data);
         return response()->json(
             [
@@ -35,6 +40,10 @@ class ContactController extends Controller
     {
         $this->validations($request, $id);
         $data = $request->all();
+        //PHOTO
+        if ($request->has('photo')) {
+            $data['photo'] = $this->uploadPhoto($request->photo);
+        }
         $contacts = Contact::find($id);
         $contacts->update($data);
         return response()->json(
@@ -64,5 +73,12 @@ class ContactController extends Controller
             'names' => 'required',
             'phone' => 'required|min:10|max:10|unique:contacts,phone' . $rulesUpdate
         ]);
+    }
+    //UPLOAD PHOTO
+    public function uploadPhoto($files)
+    {
+        $nameFiles = time() . '.' . $files->getClientOriginalExtension();
+        $files->move(base_path('/public/uploads'), $nameFiles);
+        return $nameFiles;
     }
 }
