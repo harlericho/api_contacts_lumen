@@ -48,6 +48,7 @@ $app->singleton(
     App\Console\Kernel::class
 );
 
+
 /*
 |--------------------------------------------------------------------------
 | Register Config Files
@@ -94,11 +95,13 @@ $app->configure('app');
 // $app->register(App\Providers\AppServiceProvider::class);
 // $app->register(App\Providers\AuthServiceProvider::class);
 // $app->register(App\Providers\EventServiceProvider::class);
+$app->register(Illuminate\Filesystem\FilesystemServiceProvider::class);
 $app->register(Fruitcake\Cors\CorsServiceProvider::class);
 $app->configure('cors');
 $app->middleware([
     Fruitcake\Cors\HandleCors::class,
 ]);
+
 /*
 |--------------------------------------------------------------------------
 | Load The Application Routes

@@ -24,9 +24,14 @@ class ContactController extends Controller
         $data = $request->all();
 
         //PHOTO
-        if ($request->has('photo')) {
+        //if ($request->has('photo')) {
+        if (empty($request->has('photo'))) {
+            $data['photo'] = 'sin-photo.png';
+        } else {
             $data['photo'] = $this->uploadPhoto($request->photo);
         }
+        //  $data['photo'] = $this->uploadPhoto($request->photo);
+        //}
         Contact::create($data);
         return response()->json(
             [
@@ -40,11 +45,16 @@ class ContactController extends Controller
     {
         $this->validations($request, $id);
         $data = $request->all();
+        $contacts = Contact::find($id);
         //PHOTO
         if ($request->has('photo')) {
-            $data['photo'] = $this->uploadPhoto($request->photo);
+            if ($data['photo'] != "sin-photo.png") {
+                $file = base_path('/public/uploads/') . $contacts['photo'];
+                unlink($file);
+                $data['photo'] = $this->uploadPhoto($request->photo);
+            }
         }
-        $contacts = Contact::find($id);
+
         $contacts->update($data);
         return response()->json(
             [
@@ -56,6 +66,11 @@ class ContactController extends Controller
     //DELETE
     public function destroy($id)
     {
+        $contact = Contact::find($id);
+        if ($contact['photo'] != 'sin-photo.png') {
+            $file = base_path('/public/uploads/') . $contact['photo'];
+            unlink($file);
+        }
         Contact::destroy($id);
         return response()->json(
             [
